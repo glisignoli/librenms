@@ -50,6 +50,10 @@ class Alerta extends Transport
             'type' => $alert_data['title'],
         ];
 
+        if ($alert_data['state'] == AlertState::ACKNOWLEDGED and $this->config['acknowledge']) {
+            $data['status'] = 'ack';
+        }
+
         $res = Http::client()
             ->withHeaders([
                 'Authorization' => 'Key ' . $this->config['apikey'],
@@ -97,6 +101,13 @@ class Alerta extends Transport
                     'descr' => 'What severity you want Alerta to reflect when rule unmatches/recovers.',
                     'type' => 'text',
                 ],
+                [
+                    'title' => 'Acknowledge alerts',
+                    'name' => 'acknowledge',
+                    'descr' => 'Allow librenms to acknowledge alerts in Alerta.',
+                    'type' => 'checkbox',
+                    'default' => false
+                ]
             ],
             'validation' => [
                 'alerta-url' => 'required|url',
